@@ -1,0 +1,85 @@
+schema of yours "Magic of Diffusion models" 
+
+ Magic of Diffusion models using in a diffrenet fileds like-wise physics, finance, and machine learning, to model the spread of particles, information, or influence. The schema  considered as a data integrity, security, scalability, and regulatory compliance.
+
+Database schema Designs:
+Users tables : Information about the users of the system, Stores user information with roles for access control.
+CREATE TABLE Users (
+    user_id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    role ENUM('admin', 'researcher', 'viewer') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+* Projects tables : Information about different diffusion model projects, Manages different projects, linking each project to an user. 
+CREATE TABLE Projects (
+    project_id INT PRIMARY KEY AUTO_INCREMENT,
+    project_name VARCHAR(100) NOT NULL,
+    description TEXT,
+    owner_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (owner_id) REFERENCES Users(user_id)
+);
+*Diffusion Models: Details about specific diffusion models, Contains details about each diffusion model, linked to a project.
+CREATE TABLE DiffusionModels (
+    model_id INT PRIMARY KEY AUTO_INCREMENT,
+    project_id INT,
+    model_name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (project_id) REFERENCES Projects(project_id)
+);
+
+Simulations Tables : Data from simulations run on diffusion models, Tracks simulations run on diffusion models, including their status and timing.
+CREATE TABLE Simulations (
+    simulation_id INT PRIMARY KEY AUTO_INCREMENT,
+    model_id INT,
+    simulation_name VARCHAR(100) NOT NULL,
+    start_time TIMESTAMP,
+    end_time TIMESTAMP,
+    status ENUM('pending', 'running', 'completed', 'failed') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (model_id) REFERENCES DiffusionModels(model_id)
+);
+
+Parameters tables : Parameters used in simulations, Holds parameters used in simulations, enabling reproducibility and analysis.
+CREATE TABLE Parameters (
+    parameter_id INT PRIMARY KEY AUTO_INCREMENT,
+    simulation_id INT,
+    parameter_name VARCHAR(100) NOT NULL,
+    parameter_value VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (simulation_id) REFERENCES Simulations(simulation_id)
+);
+Results tables : Results of the simulations, Stores the results of simulations in a JSON format to accommodate diverse data structures.
+
+CREATE TABLE Results (
+    result_id INT PRIMARY KEY AUTO_INCREMENT,
+    simulation_id INT,
+    result_data JSON NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (simulation_id) REFERENCES Simulations(simulation_id)
+);
+Audit log file: Logging actions for security and compliance, Records user actions for security, monitoring, and compliance purposes.
+CREATE TABLE AuditLogs (
+    log_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    action VARCHAR(255) NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    details TEXT,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+
+);
+>>vara056@gmail.com<<
+for more info.
+);
